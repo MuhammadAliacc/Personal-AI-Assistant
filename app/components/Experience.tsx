@@ -4,8 +4,6 @@ import { motion } from 'framer-motion'
 import { FaBriefcase, FaCalendar, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa'
 import { useState } from 'react'
 
-const [openThesisIndex, setOpenThesisIndex] = useState<number | null>(null)
-
 const experiences = [
   {
     title: "Research Associate",
@@ -63,7 +61,8 @@ const experiences = [
 
 export default function Experience() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
-
+  const [openThesisIndex, setOpenThesisIndex] = useState<number | null>(null)
+  
   return (
     <section id="experience" className="py-20 bg-gray-50 relative overflow-hidden">
       {/* Background decoration */}
@@ -161,6 +160,8 @@ export default function Experience() {
                           </motion.li>
                         ))}
                       </ul>
+
+                      
                       {exp.thesis && (
                         <div className="mt-6">
                           <button
