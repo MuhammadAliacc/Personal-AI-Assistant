@@ -28,7 +28,6 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="flex-1 text-center lg:text-left"
           >
-            <p className="text-blue-600 font-semibold mb-3 md:mb-4 tracking-wider text-sm md:text-base">WELCOME TO MY PORTFOLIO</p>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6">
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -39,14 +38,14 @@ export default function Hero() {
             <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 mb-4 md:mb-6 h-16 md:h-20">
               <TypeAnimation
                 sequence={[
-                  'ML/AI Engineer',
-                  2000,
-                  'Agentic AI Specialist',
-                  2000,
-                  'RAG & GenAI Expert',
-                  2000,
-                  'AWS Cloud Architect',
-                  2000,
+                  'ML/AI Engineering',
+                  1500,
+                  'Agentic AI',
+                  1500,
+                  'RAG & GenAI',
+                  1500,
+                  'AWS Cloud Platforms',
+                  1500,
                 ]}
                 wrapper="span"
                 speed={50}
