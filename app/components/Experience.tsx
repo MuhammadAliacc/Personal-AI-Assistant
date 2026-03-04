@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { FaBriefcase, FaCalendar, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa'
 import { useState } from 'react'
 
+const [openThesisIndex, setOpenThesisIndex] = useState<number | null>(null)
+
 const experiences = [
   {
     title: "Research Associate",
@@ -159,9 +161,22 @@ export default function Experience() {
                           </motion.li>
                         ))}
                       </ul>
+                      {exp.thesis && (
+                        <div className="mt-6">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setOpenThesisIndex(openThesisIndex === index ? null : index)
+                            }}
+                            className="flex items-center text-purple-600 font-semibold hover:text-purple-800 transition-colors"
+                          >
+                            🎓 {openThesisIndex === index ? "Hide Master Thesis" : "View Master Thesis"}
+                          </button>
+                        </div>
+                      )}
                     </div>
 
-                    {exp.thesis && (
+                    {/* {exp.thesis && (
                         <div className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
                           <h4 className="text-xl font-semibold text-gray-800 mb-3">
                             🎓 {exp.thesis.title}
@@ -180,6 +195,33 @@ export default function Experience() {
                             ))}
                           </ul>
                         </div>
+                      )} */}
+
+                    {exp.thesis && openThesisIndex === index && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-6 p-6 bg-gray-50 rounded-xl border border-gray-200"
+                      >
+                        <h4 className="text-xl font-semibold text-gray-800 mb-3">
+                          {exp.thesis.title}
+                        </h4>
+
+                        <p className="text-gray-600 mb-4 italic border-l-4 border-purple-500 pl-4">
+                          {exp.thesis.description}
+                        </p>
+
+                        <ul className="space-y-2">
+                          {exp.thesis.highlights.map((item, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-purple-600 mr-3 mt-1">•</span>
+                              <span className="text-gray-600">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </motion.div>
                       )}
                   </motion.div>
                 </motion.div>
