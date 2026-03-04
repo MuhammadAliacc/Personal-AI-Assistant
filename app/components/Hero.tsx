@@ -135,16 +135,20 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex-1 relative"
             >
-            <div className="relative w-80 h-80 mx-auto border border-red-500">
-              <div className="absolute inset-4 bg-white rounded-full overflow-hidden shadow-2xl">
-                <Image
-                  src="DP.jpg"
-                  alt="Muhammad Ali"
-                  fill
-                  className="object-cover"
-                  priority
+            <div className="relative w-80 h-80 mx-auto">
+                {/* Animated rings */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse-slow"></div>
+                <div className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 animate-spin-slow"></div>
+                <div className="absolute inset-4 bg-white rounded-full overflow-hidden shadow-2xl">
+                {/* Use your JPG file - change the src to match your filename */}
+                <Image 
+                    src="/DP.jpg"
+                    alt="Muhammad Ali"
+                    fill
+                    className="object-cover"
+                    priority
                 />
-              </div>
+                </div>
             </div>
 
             {/* Floating tech badges (keep these as they are) */}
