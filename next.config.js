@@ -10,6 +10,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  basePath: '/out',      // Optional: if you want all files under /out in S3
+  assetPrefix: '/out',   // Ensures _next assets use /out prefix
 };
 
 module.exports = nextConfig;
