@@ -16,7 +16,6 @@
 
   body {
     @apply antialiased;
-    overflow-x: hidden;
   }
 }
 
@@ -44,12 +43,6 @@
     background-size: 50px 50px;
   }
 
-  @media (max-width: 768px) {
-    .bg-grid-pattern {
-      background-size: 30px 30px;
-    }
-  }
-
   .glass-morphism {
     @apply backdrop-blur-xl bg-white/70 border border-white/20 shadow-xl;
   }
@@ -64,34 +57,20 @@
   50% { transform: translateY(-20px); }
 }
 
-/* Custom scrollbar - hidden on mobile */
-@media (min-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #3b82f6, #4f46e5);
-    border-radius: 5px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #2563eb, #4338ca);
-  }
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-/* Mobile-specific adjustments */
-@media (max-width: 768px) {
-  h1 {
-    word-break: break-word;
-  }
-  
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3b82f6, #4f46e5);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2563eb, #4338ca);
 }
