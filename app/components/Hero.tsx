@@ -138,7 +138,7 @@ export default function Hero() {
             <div className="relative w-80 h-80 mx-auto border border-red-500">
               <div className="absolute inset-4 bg-white rounded-full overflow-hidden shadow-2xl">
                 <Image
-                  src="/DP.jpg"
+                  src="DP.jpg"
                   alt="Muhammad Ali"
                   fill
                   className="object-cover"
