@@ -156,7 +156,7 @@ export default function Hero() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 3 }}
-              className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-white px-2 md:px-4 py-1 md:py-2 rounded-full shadow-lg text-xs md:text-base"
+              className="absolute -top-1/2 -left-2 md:-top-4 md:-left-4 bg-white px-2 md:px-4 py-1 md:py-2 rounded-full shadow-lg text-xs md:text-base"
             >
               <span className="text-blue-600 font-semibold">🤖 LLM</span>
             </motion.div>
