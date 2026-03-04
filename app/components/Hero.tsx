@@ -153,27 +153,24 @@ export default function Hero() {
             </div>
 
             {/* Floating tech badges - adjusted for mobile */}
-            {/* Floating tech badges */}
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 3 }}
-              className="absolute -top-6 left-0 bg-white px-3 py-1 rounded-full shadow-lg text-xs md:text-sm"
+              className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-white px-2 md:px-4 py-1 md:py-2 rounded-full shadow-lg text-xs md:text-base"
             >
               <span className="text-blue-600 font-semibold">🤖 LLM</span>
             </motion.div>
-
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 3, delay: 0.5 }}
-              className="absolute -bottom-6 left-0 bg-white px-3 py-1 rounded-full shadow-lg text-xs md:text-sm"
+              className="absolute -bottom-2 -left-2 md:-bottom-4 md:-left-4 bg-white px-2 md:px-4 py-1 md:py-2 rounded-full shadow-lg text-xs md:text-base"
             >
               <span className="text-indigo-600 font-semibold">⚡ RAG</span>
             </motion.div>
-
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 3, delay: 1 }}
-              className="absolute top-1/2 -right-6 bg-white px-3 py-1 rounded-full shadow-lg text-xs md:text-sm"
+              className="absolute top-1/2 -right-6 md:-right-12 bg-white px-2 md:px-4 py-1 md:py-2 rounded-full shadow-lg text-xs md:text-base"
             >
               <span className="text-purple-600 font-semibold">🚀 GenAI</span>
             </motion.div>
