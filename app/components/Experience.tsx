@@ -145,7 +145,23 @@ export default function Experience() {
                         </p>
                       )}
 
-                      {exp.thesis && (
+                      <ul className="space-y-3">
+                        {exp.achievements.map((achievement, idx) => (
+                          <motion.li
+                            key={idx}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="flex items-start"
+                          >
+                            <span className="text-blue-600 mr-3 mt-1">•</span>
+                            <span className="text-gray-600">{achievement}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {exp.thesis && (
                         <div className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
                           <h4 className="text-xl font-semibold text-gray-800 mb-3">
                             🎓 {exp.thesis.title}
@@ -165,22 +181,6 @@ export default function Experience() {
                           </ul>
                         </div>
                       )}
-
-                      <ul className="space-y-3">
-                        {exp.achievements.map((achievement, idx) => (
-                          <motion.li
-                            key={idx}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="flex items-start"
-                          >
-                            <span className="text-blue-600 mr-3 mt-1">•</span>
-                            <span className="text-gray-600">{achievement}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
                   </motion.div>
                 </motion.div>
               </div>
