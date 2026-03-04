@@ -144,6 +144,28 @@ export default function Experience() {
                           {exp.description}
                         </p>
                       )}
+
+                      {exp.thesis && (
+                        <div className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                          <h4 className="text-xl font-semibold text-gray-800 mb-3">
+                            🎓 {exp.thesis.title}
+                          </h4>
+
+                          <p className="text-gray-600 mb-4 italic border-l-4 border-purple-500 pl-4">
+                            {exp.thesis.description}
+                          </p>
+
+                          <ul className="space-y-2">
+                            {exp.thesis.highlights.map((item, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-purple-600 mr-3 mt-1">•</span>
+                                <span className="text-gray-600">{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
                       <ul className="space-y-3">
                         {exp.achievements.map((achievement, idx) => (
                           <motion.li
