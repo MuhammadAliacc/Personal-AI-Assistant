@@ -6,31 +6,28 @@ import { useState } from 'react'
 
 const experiences = [
   {
-    title: "Master Thesis",
-    company: "Cologne University of Applied Sciences",
-    period: "July 2025 - February 2026",
-    location: "Cologne, Germany",
-    description: "Development of a Scalable Machine Learning Pipeline on AWS for Optimizing Building Heating Systems using Reinforcement Learning and Transfer Learning",
-    achievements: [
-      "Designed cloud-native ML platform on AWS for multi-source data ingestion",
-      "Implemented modular forecasting pipeline for multivariate predictive modeling",
-      "Trained RL models for building heating system optimization",
-      "Applied transfer learning to accelerate adaptation to unseen environments"
-    ],
-    icon: "🎓",
-    color: "from-blue-500 to-cyan-500"
-  },
-  {
     title: "Research Associate",
     company: "Cologne University of Applied Sciences",
     period: "November 2023 - December 2025",
     location: "Cologne, Germany",
+    description: "Led development of scalable ML systems for smart building optimization.",
     achievements: [
       "Designed ML-based solutions for smart building optimization",
       "Built scalable data pipelines for real-world sensor data",
       "Developed cloud-native AWS workflows for end-to-end ML solutions",
       "Integrated LLMs and RAG-based systems into applications"
     ],
+    thesis: {
+      title: "Master Thesis Project",
+      description:
+        "Development of a Scalable Machine Learning Pipeline on AWS for Optimizing Building Heating Systems using Reinforcement Learning and Transfer Learning",
+      highlights: [
+        "Designed cloud-native ML platform on AWS",
+        "Implemented modular forecasting pipeline",
+        "Trained RL models for heating optimization",
+        "Applied transfer learning for adaptation to unseen environments"
+      ]
+    },
     icon: "🔬",
     color: "from-purple-500 to-pink-500"
   },
