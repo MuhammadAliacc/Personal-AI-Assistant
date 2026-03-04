@@ -96,7 +96,7 @@ export default function Hero() {
                 View My Work
               </motion.a>
 
-              <motion.a
+              {/* <motion.a
                 href="/resume.pdf"
                 target="_blank"
                 whileHover={{ scale: 1.05 }}
@@ -105,7 +105,7 @@ export default function Hero() {
               >
                 <FaFileDownload className="mr-2" />
                 Resume
-              </motion.a>
+              </motion.a> */}
             </div>
 
             {/* Social Links */}
@@ -143,7 +143,7 @@ export default function Hero() {
               <div className="absolute inset-1 sm:inset-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 animate-spin-slow"></div>
               <div className="absolute inset-2 sm:inset-4 bg-white rounded-full overflow-hidden shadow-2xl">
                 <Image 
-                  src="/ali.jpg" 
+                  src="/DP.jpg" 
                   alt="Muhammad Ali"
                   fill
                   className="object-cover"
