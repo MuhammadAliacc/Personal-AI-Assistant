@@ -12,7 +12,9 @@ import {
   FaBrain,
   FaCloud,
   FaDatabase,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaBell,
+  FaCommentDots
 } from "react-icons/fa";
 import { SiOpenai } from "react-icons/si";
 
@@ -32,6 +34,8 @@ const suggestedQuestions = [
 
 export default function OpenRouterChatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -43,9 +47,39 @@ export default function OpenRouterChatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const popupTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Show popup after 3 seconds
+  useEffect(() => {
+    if (!isOpen && !hasInteracted) {
+      popupTimeoutRef.current = setTimeout(() => {
+        setShowPopup(true);
+        // Auto hide popup after 5 seconds
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 5000);
+      }, 3000);
+    }
+
+    return () => {
+      if (popupTimeoutRef.current) {
+        clearTimeout(popupTimeoutRef.current);
+      }
+    };
+  }, [isOpen, hasInteracted]);
+
+  // Hide notification when chat is opened
+  useEffect(() => {
+    if (isOpen) {
+      setShowNotification(false);
+      setShowPopup(false);
+      setHasInteracted(true);
+    }
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -70,6 +104,7 @@ export default function OpenRouterChatbot() {
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: messageToSend }]);
     setIsLoading(true);
+    setHasInteracted(true);
 
     try {
       const response = await fetch("/api/openrouter", {
@@ -130,15 +165,76 @@ export default function OpenRouterChatbot() {
 
   return (
     <>
-      {/* Floating Button */}
-      <motion.button
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
-        onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {isOpen ? <FaTimes size={24} /> : <FaComments size={24} />}
-      </motion.button>
+      {/* Floating Button with Notification */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* Notification Badge */}
+        <AnimatePresence>
+          {showNotification && !isOpen && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white"
+            >
+              1
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Popup Message */}
+        <AnimatePresence>
+          {showPopup && !isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="absolute bottom-16 right-0 w-64 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
+            >
+              {/* Triangle pointer */}
+              <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45 border-r border-b border-purple-100"></div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <FaRobot className="text-white text-sm" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-800 font-medium">Ask me anything! 👋</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    I can tell you about Muhammad's skills, experience, and projects
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setIsOpen(true);
+                      setShowPopup(false);
+                      setShowNotification(false);
+                    }}
+                    className="mt-2 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full hover:shadow-md transition-shadow w-full"
+                  >
+                    Ask Now
+                  </button>
+                </div>
+                <button 
+                  onClick={() => setShowPopup(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FaTimes size={14} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Chat Button */}
+        <motion.button
+          className="relative w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
+          onClick={() => setIsOpen(!isOpen)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {isOpen ? <FaTimes size={24} /> : <FaComments size={24} />}
+        </motion.button>
+      </div>
 
       {/* Chat Window */}
       <AnimatePresence>
@@ -159,17 +255,28 @@ export default function OpenRouterChatbot() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Muhammad Ali's AI Assistant</h3>
-                    <p className="text-xs text-purple-100">Ask me anything!</p>
+                    <p className="text-xs text-purple-100">Online • Ready to help</p>
                   </div>
                 </div>
                 <button 
                   onClick={resetChat}
                   className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full transition-colors"
+                  title="Start new conversation"
                 >
                   Reset
                 </button>
               </div>
             </div>
+
+            {/* Welcome Banner */}
+            {messages.length === 1 && !hasInteracted && (
+              <div className="bg-purple-50 px-4 py-2 border-b border-purple-100">
+                <p className="text-xs text-purple-700 flex items-center">
+                  <FaCommentDots className="mr-2" />
+                  👋 Feel free to ask me anything about Muhammad's work!
+                </p>
+              </div>
+            )}
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
@@ -227,7 +334,7 @@ export default function OpenRouterChatbot() {
                   transition={{ delay: 0.5 }}
                   className="mt-4"
                 >
-                  <p className="text-xs text-gray-500 mb-2">Suggested questions:</p>
+                  <p className="text-xs text-gray-500 mb-2">Try asking:</p>
                   <div className="flex flex-wrap gap-2">
                     {suggestedQuestions.map((question, index) => (
                       <button
@@ -309,4 +416,3 @@ export default function OpenRouterChatbot() {
     </>
   );
 }
-
