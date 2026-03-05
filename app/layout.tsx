@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import OpenRouterChatbot from './components/OpenRouterChatbot'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
         {children}
+        <OpenRouterChatbot/>
       </body>
     </html>
   )
