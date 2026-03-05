@@ -13,14 +13,24 @@ import {
   FaCloud,
   FaDatabase,
   FaExclamationTriangle,
-  FaBell,
-  FaCommentDots
+  FaCommentDots,
+  FaMicrophone,
+  FaStop,
+  FaVolumeUp,
+  FaSpinner
 } from "react-icons/fa";
-import { SiOpenai } from "react-icons/si";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+// Declare SpeechRecognition type
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
 }
 
 const suggestedQuestions = [
@@ -40,7 +50,7 @@ export default function OpenRouterChatbot() {
     {
       role: "assistant",
       content:
-        "👋 Hi! I'm Muhammad Ali's AI assistant. Ask me anything about his skills, experience, projects, or education!",
+        "👋 Hi! I'm Muhammad Ali's AI assistant. Ask me anything about his skills, experience, projects, or education! You can type or use 🎤 voice input.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -49,9 +59,90 @@ export default function OpenRouterChatbot() {
   const [error, setError] = useState<string | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   
+  // Voice input states
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeechSupported, setIsSpeechSupported] = useState(true);
+  const [transcript, setTranscript] = useState("");
+  const recognitionRef = useRef<any>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Initialize speech recognition
+  useEffect(() => {
+    // Check if browser supports speech recognition
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      setIsSpeechSupported(false);
+      console.log("Speech recognition not supported");
+      return;
+    }
+
+    // Initialize speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    
+    if (recognitionRef.current) {
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onstart = () => {
+        setIsListening(true);
+        setError(null);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+        if (transcript) {
+          setInput(transcript);
+        }
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          setError("Microphone access denied. Please allow microphone access.");
+        } else if (event.error === 'no-speech') {
+          setError("No speech detected. Please try again.");
+        } else {
+          setError("Voice input error. Please try again.");
+        }
+      };
+
+      recognitionRef.current.onresult = (event: any) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        if (finalTranscript) {
+          setTranscript(finalTranscript);
+          setInput(finalTranscript);
+        } else if (interimTranscript) {
+          setInput(interimTranscript + '...');
+        }
+      };
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {
+          // Ignore errors on cleanup
+        }
+      }
+    };
+  }, [transcript]);
 
   // Show popup after 3 seconds
   useEffect(() => {
@@ -102,6 +193,7 @@ export default function OpenRouterChatbot() {
     setError(null);
     setShowSuggestions(false);
     setInput("");
+    setTranscript("");
     setMessages((prev) => [...prev, { role: "user", content: messageToSend }]);
     setIsLoading(true);
     setHasInteracted(true);
@@ -128,6 +220,10 @@ export default function OpenRouterChatbot() {
         ...prev,
         { role: "assistant", content: data.response },
       ]);
+
+      // Optional: Speak the response
+      // speakResponse(data.response);
+      
     } catch (error) {
       console.error("Error sending message:", error);
       setError("Failed to get response. Please try again.");
@@ -144,6 +240,43 @@ export default function OpenRouterChatbot() {
     }
   };
 
+  // Voice input handlers
+  const startListening = () => {
+    if (!isSpeechSupported) {
+      setError("Voice input is not supported in your browser. Try Chrome or Edge.");
+      return;
+    }
+
+    try {
+      setTranscript("");
+      setInput("Listening...");
+      recognitionRef.current?.start();
+    } catch (error) {
+      console.error("Failed to start listening:", error);
+      setError("Failed to start voice input. Please try again.");
+    }
+  };
+
+  const stopListening = () => {
+    try {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } catch (error) {
+      console.error("Failed to stop listening:", error);
+    }
+  };
+
+  // Optional: Text-to-speech for responses
+  const speakResponse = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -156,7 +289,7 @@ export default function OpenRouterChatbot() {
       {
         role: "assistant",
         content:
-          "👋 Hi! I'm Muhammad Ali's AI assistant. Ask me anything about his skills, experience, projects, or education!",
+          "👋 Hi! I'm Muhammad Ali's AI assistant. Ask me anything about his skills, experience, projects, or education! You can type or use 🎤 voice input.",
       },
     ]);
     setShowSuggestions(true);
@@ -189,37 +322,39 @@ export default function OpenRouterChatbot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-16 right-0 w-64 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
+              className="absolute bottom-16 right-0 w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
             >
               {/* Triangle pointer */}
               <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45 border-r border-b border-purple-100"></div>
               
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <FaRobot className="text-white text-sm" />
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <FaRobot className="text-white text-lg" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-800 font-medium">Ask me anything! 👋</p>
+                  <p className="text-sm text-gray-800 font-medium">Chat with me! 🎤</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    I can tell you about Muhammad's skills, experience, and projects
+                    Ask questions using voice or text about Muhammad's skills and experience
                   </p>
-                  <button 
-                    onClick={() => {
-                      setIsOpen(true);
-                      setShowPopup(false);
-                      setShowNotification(false);
-                    }}
-                    className="mt-2 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full hover:shadow-md transition-shadow w-full"
-                  >
-                    Ask Now
-                  </button>
+                  <div className="flex gap-2 mt-2">
+                    <button 
+                      onClick={() => {
+                        setIsOpen(true);
+                        setShowPopup(false);
+                        setShowNotification(false);
+                      }}
+                      className="flex-1 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full hover:shadow-md transition-shadow"
+                    >
+                      Ask Now
+                    </button>
+                    <button 
+                      onClick={() => setShowPopup(false)}
+                      className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                      Later
+                    </button>
+                  </div>
                 </div>
-                <button 
-                  onClick={() => setShowPopup(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <FaTimes size={14} />
-                </button>
               </div>
             </motion.div>
           )}
@@ -255,7 +390,10 @@ export default function OpenRouterChatbot() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Muhammad Ali's AI Assistant</h3>
-                    <p className="text-xs text-purple-100">Online • Ready to help</p>
+                    <p className="text-xs text-purple-100 flex items-center">
+                      <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                      Online • Voice supported
+                    </p>
                   </div>
                 </div>
                 <button 
@@ -268,12 +406,12 @@ export default function OpenRouterChatbot() {
               </div>
             </div>
 
-            {/* Welcome Banner */}
-            {messages.length === 1 && !hasInteracted && (
-              <div className="bg-purple-50 px-4 py-2 border-b border-purple-100">
+            {/* Voice Feature Banner */}
+            {!hasInteracted && (
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 px-4 py-2 border-b border-purple-100">
                 <p className="text-xs text-purple-700 flex items-center">
-                  <FaCommentDots className="mr-2" />
-                  👋 Feel free to ask me anything about Muhammad's work!
+                  <FaMicrophone className="mr-2 text-purple-600" />
+                  🎤 Try voice input! Click the microphone button and speak your question.
                 </p>
               </div>
             )}
@@ -355,21 +493,40 @@ export default function OpenRouterChatbot() {
             {/* Input Area */}
             <div className="p-4 bg-white border-t border-gray-200">
               <div className="flex items-center space-x-2">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask about skills, experience..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                  disabled={isLoading}
-                />
+                <div className="flex-1 relative">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder={isListening ? "Listening..." : "Ask or click 🎤..."}
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                    disabled={isLoading || isListening}
+                  />
+                  
+                  {/* Voice Input Button */}
+                  {isSpeechSupported && (
+                    <button
+                      onClick={isListening ? stopListening : startListening}
+                      disabled={isLoading}
+                      className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full transition-all ${
+                        isListening 
+                          ? 'bg-red-500 text-white animate-pulse' 
+                          : 'text-gray-400 hover:text-purple-600'
+                      }`}
+                      title={isListening ? "Stop listening" : "Start voice input"}
+                    >
+                      {isListening ? <FaStop size={16} /> : <FaMicrophone size={16} />}
+                    </button>
+                  )}
+                </div>
+                
                 <button
                   onClick={() => sendMessage()}
-                  disabled={isLoading || !input.trim()}
+                  disabled={isLoading || !input.trim() || isListening}
                   className={`p-2 rounded-full ${
-                    isLoading || !input.trim()
+                    isLoading || !input.trim() || isListening
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-md"
                   } text-white transition-all`}
@@ -377,6 +534,22 @@ export default function OpenRouterChatbot() {
                   <FaPaperPlane size={16} />
                 </button>
               </div>
+              
+              {/* Voice Status Indicator */}
+              {isListening && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-center mt-2 space-x-2"
+                >
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                  </div>
+                  <span className="text-xs text-gray-500">Listening... speak now</span>
+                </motion.div>
+              )}
               
               {/* Quick action buttons */}
               <div className="flex justify-center space-x-4 mt-3">
@@ -409,6 +582,13 @@ export default function OpenRouterChatbot() {
                   Contact
                 </button>
               </div>
+              
+              {/* Speech Support Warning */}
+              {!isSpeechSupported && (
+                <p className="text-center text-xs text-gray-400 mt-2">
+                  Voice input not supported. Try Chrome or Edge browser.
+                </p>
+              )}
             </div>
           </motion.div>
         )}
