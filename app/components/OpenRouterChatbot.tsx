@@ -500,7 +500,7 @@ export default function OpenRouterChatbot() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={isListening ? "Listening..." : "Ask or click 🎤..."}
+                    placeholder={isListening ? "Listening..." : "Ask Question..."}
                     className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     disabled={isLoading || isListening}
                   />
