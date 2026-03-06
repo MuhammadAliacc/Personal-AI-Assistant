@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Summary from './components/Summary'
@@ -9,10 +9,8 @@ import Skills from './components/Skills'
 import Certifications from './components/Certifications'
 import Education from './components/Education'
 import Footer from './components/Footer'
-import OpenRouterChatbot from './components/OpenRouterChatbot'
 
 export default function Home() {
-   const chatbotRef = useRef<{ openChat: () => void } | null>(null)
   useEffect(() => {
     // Smooth scroll for anchor links with proper validation
     const handleAnchorClick = (e: Event) => {
@@ -50,23 +48,16 @@ export default function Home() {
     }
   }, [])
 
-  const handleOpenChat = () => {
-    if (chatbotRef.current) {
-      chatbotRef.current.openChat()
-    }
-  }
-
   return (
     <main className="min-h-screen">
       <Header />
-      <Hero onOpenChat={handleOpenChat} />
+      <Hero />
       <Summary />
       <Experience />
       <Skills />
       <Certifications />
       <Education />
       <Footer />
-      <OpenRouterChatbot ref={chatbotRef} />
     </main>
   )
 }
