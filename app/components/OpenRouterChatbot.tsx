@@ -288,11 +288,7 @@ export default function OpenRouterChatbot() {
   }, [messages]);
 
   // REMOVED: Automatic focus when chat opens
-  // useEffect(() => {
-  //   if (isOpen && inputRef.current) {
-  //     inputRef.current.focus();
-  //   }
-  // }, [isOpen]);
+  // This was causing the keyboard to open automatically
 
   const sendMessage = async (messageText?: string) => {
     const messageToSend = messageText || input;
@@ -398,6 +394,16 @@ export default function OpenRouterChatbot() {
     setIsInputFocused(false);
   };
 
+  // Prevent input from auto-focusing when chat opens
+  const handleChatOpen = () => {
+    setIsOpen(true);
+    // Explicitly NOT focusing the input
+    // Remove any focus from input if it somehow gets focused
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+  };
+
   return (
     <>
       {/* Floating Button with Notification */}
@@ -441,7 +447,7 @@ export default function OpenRouterChatbot() {
                   <div className="flex gap-2 mt-2">
                     <button 
                       onClick={() => {
-                        setIsOpen(true);
+                        handleChatOpen();
                         setShowPopup(false);
                         setShowNotification(false);
                       }}
@@ -465,7 +471,13 @@ export default function OpenRouterChatbot() {
         {/* Main Chat Button */}
         <motion.button
           className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            if (!isOpen) {
+              handleChatOpen();
+            } else {
+              setIsOpen(false);
+            }
+          }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -629,7 +641,13 @@ export default function OpenRouterChatbot() {
                       {suggestedQuestions.slice(0, 4).map((question, index) => (
                         <button
                           key={index}
-                          onClick={() => sendMessage(question)}
+                          onClick={() => {
+                            sendMessage(question);
+                            // Ensure input loses focus when clicking suggested questions
+                            if (inputRef.current) {
+                              inputRef.current.blur();
+                            }
+                          }}
                           className="text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 text-gray-600 hover:border-purple-500 hover:text-purple-600 transition-colors"
                         >
                           {question}
@@ -654,10 +672,12 @@ export default function OpenRouterChatbot() {
                       onKeyPress={handleKeyPress}
                       onFocus={handleInputFocus}
                       onBlur={handleInputBlur}
-                      placeholder={isListening ? "Listening..." : "Tap to type..."}
+                      placeholder="Type your question..."
                       className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-base sm:text-sm"
                       style={{ fontSize: '16px' }} // Force 16px to prevent zoom on iOS
                       disabled={isLoading || isListening}
+                      // Important: Don't autoFocus
+                      autoFocus={false}
                     />
                     
                     {/* Voice Input Button */}
@@ -709,7 +729,12 @@ export default function OpenRouterChatbot() {
                 {/* Quick action buttons - Simplified for mobile */}
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2 sm:mt-3">
                   <button 
-                    onClick={() => sendMessage("What are your AI skills?")}
+                    onClick={() => {
+                      sendMessage("What are your AI skills?");
+                      if (inputRef.current) {
+                        inputRef.current.blur();
+                      }
+                    }}
                     className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                   >
                     <FaBrain className="mr-1" size={10} />
@@ -717,7 +742,12 @@ export default function OpenRouterChatbot() {
                     <span className="sm:hidden">AI</span>
                   </button>
                   <button 
-                    onClick={() => sendMessage("Cloud experience?")}
+                    onClick={() => {
+                      sendMessage("Cloud experience?");
+                      if (inputRef.current) {
+                        inputRef.current.blur();
+                      }
+                    }}
                     className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                   >
                     <FaCloud className="mr-1" size={10} />
@@ -725,7 +755,12 @@ export default function OpenRouterChatbot() {
                     <span className="sm:hidden">Cloud</span>
                   </button>
                   <button 
-                    onClick={() => sendMessage("What projects?")}
+                    onClick={() => {
+                      sendMessage("What projects?");
+                      if (inputRef.current) {
+                        inputRef.current.blur();
+                      }
+                    }}
                     className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                   >
                     <FaCode className="mr-1" size={10} />
@@ -733,7 +768,12 @@ export default function OpenRouterChatbot() {
                     <span className="sm:hidden">Projects</span>
                   </button>
                   <button 
-                    onClick={() => sendMessage("Contact info?")}
+                    onClick={() => {
+                      sendMessage("Contact info?");
+                      if (inputRef.current) {
+                        inputRef.current.blur();
+                      }
+                    }}
                     className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                   >
                     <FaDatabase className="mr-1" size={10} />
