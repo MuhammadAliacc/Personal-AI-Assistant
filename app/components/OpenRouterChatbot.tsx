@@ -1,7 +1,7 @@
 // app/components/OpenRouterChatbot.tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaComments, 
@@ -19,6 +19,11 @@ import {
   FaVolumeUp,
   FaSpinner
 } from "react-icons/fa";
+
+// Define the ref type for parent components
+export interface ChatbotHandle {
+  openChat: () => void;
+}
 
 interface Message {
   role: "user" | "assistant";
@@ -42,7 +47,7 @@ const suggestedQuestions = [
   "How can I contact you?"
 ];
 
-export default function OpenRouterChatbot() {
+const OpenRouterChatbot = forwardRef<ChatbotHandle, {}>((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
@@ -68,6 +73,16 @@ export default function OpenRouterChatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    openChat() {
+      setIsOpen(true);
+      setShowNotification(false);
+      setShowPopup(false);
+      setHasInteracted(true);
+    }
+  }));
 
   // Initialize speech recognition
   useEffect(() => {
@@ -500,7 +515,7 @@ export default function OpenRouterChatbot() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={isListening ? "Listening..." : "Ask Question..."}
+                    placeholder={isListening ? "Listening..." : "Ask or click 🎤..."}
                     className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                     disabled={isLoading || isListening}
                   />
@@ -595,4 +610,8 @@ export default function OpenRouterChatbot() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+OpenRouterChatbot.displayName = 'OpenRouterChatbot';
+
+export default OpenRouterChatbot;

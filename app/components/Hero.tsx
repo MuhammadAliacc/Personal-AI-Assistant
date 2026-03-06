@@ -1,12 +1,16 @@
 'use client'
 
-import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaFileDownload } from 'react-icons/fa'
+import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaFileDownload, FaRobot } from 'react-icons/fa'
 import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { TypeAnimation } from 'react-type-animation'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 
-export default function Hero() {
+interface HeroProps {
+  onOpenChat?: () => void;
+}
+
+export default function Hero({ onOpenChat }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-16 md:pt-0">
       {/* Animated background elements - hidden on mobile */}
@@ -28,6 +32,7 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="flex-1 text-center lg:text-left"
           >
+            <p className="text-blue-600 font-semibold mb-3 md:mb-4 tracking-wider text-sm md:text-base">WELCOME TO MY PORTFOLIO</p>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6">
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -38,14 +43,14 @@ export default function Hero() {
             <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 mb-4 md:mb-6 h-16 md:h-20">
               <TypeAnimation
                 sequence={[
-                  'ML/AI Engineering',
-                  1500,
-                  'Agentic AI',
-                  1500,
-                  'RAG & GenAI',
-                  1500,
-                  'AWS Cloud Platforms',
-                  1500,
+                  'ML/AI Engineer',
+                  2000,
+                  'Agentic AI Specialist',
+                  2000,
+                  'RAG & GenAI Expert',
+                  2000,
+                  'AWS Cloud Architect',
+                  2000,
                 ]}
                 wrapper="span"
                 speed={50}
@@ -95,7 +100,21 @@ export default function Hero() {
                 View My Work
               </motion.a>
 
-              {/* <motion.a
+              {/* AI Assistant Button - New */}
+              <motion.button
+                onClick={onOpenChat}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-sm md:text-base group"
+              >
+                <FaRobot className="mr-2 group-hover:rotate-12 transition-transform" />
+                AI Assistant
+                <span className="ml-2 px-1.5 py-0.5 bg-white/20 text-xs rounded-full animate-pulse">
+                  NEW
+                </span>
+              </motion.button>
+
+              <motion.a
                 href="/resume.pdf"
                 target="_blank"
                 whileHover={{ scale: 1.05 }}
@@ -104,7 +123,7 @@ export default function Hero() {
               >
                 <FaFileDownload className="mr-2" />
                 Resume
-              </motion.a> */}
+              </motion.a>
             </div>
 
             {/* Social Links */}
@@ -142,7 +161,7 @@ export default function Hero() {
               <div className="absolute inset-1 sm:inset-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 animate-spin-slow"></div>
               <div className="absolute inset-2 sm:inset-4 bg-white rounded-full overflow-hidden shadow-2xl">
                 <Image 
-                  src="/DP.jpg" 
+                  src="/ali.jpg" 
                   alt="Muhammad Ali"
                   fill
                   className="object-cover"
