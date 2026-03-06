@@ -299,7 +299,8 @@ export default function OpenRouterChatbot() {
   return (
     <>
       {/* Floating Button with Notification */}
-      <div className="fixed bottom-6 right-6 z-50">
+
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         {/* Notification Badge */}
         <AnimatePresence>
           {showNotification && !isOpen && (
@@ -322,8 +323,8 @@ export default function OpenRouterChatbot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-16 right-0 w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
-            >
+              className="absolute bottom-16 right-0 w-64 sm:w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
+              >
               {/* Triangle pointer */}
               <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45 border-r border-b border-purple-100"></div>
               
@@ -379,8 +380,20 @@ export default function OpenRouterChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
-          >
+
+            // className="fixed bottom-20 right-4 z-50 
+            //             w-[calc(100vw-2rem)] sm:w-96 
+            //             h-[70vh] sm:h-[600px] 
+            //             bg-white rounded-2xl shadow-2xl 
+            //             flex flex-col overflow-hidden border border-gray-200"
+
+            className="fixed 
+            bottom-0 right-0 
+            w-full h-[85vh] 
+            sm:bottom-24 sm:right-6 
+            sm:w-96 sm:h-[600px]
+            z-50 bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
+            >
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
               <div className="flex items-center justify-between">
@@ -427,7 +440,7 @@ export default function OpenRouterChatbot() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-2 ${
                       message.role === "user"
                         ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
                         : "bg-white text-gray-800 shadow-sm border border-gray-200"
@@ -473,7 +486,7 @@ export default function OpenRouterChatbot() {
                   className="mt-4"
                 >
                   <p className="text-xs text-gray-500 mb-2">Try asking:</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 justify-start">
                     {suggestedQuestions.map((question, index) => (
                       <button
                         key={index}
@@ -552,7 +565,7 @@ export default function OpenRouterChatbot() {
               )}
               
               {/* Quick action buttons */}
-              <div className="flex justify-center space-x-4 mt-3">
+              <div className="flex flex-wrap justify-center gap-3 mt-3">
                 <button 
                   onClick={() => sendMessage("What are your AI/ML skills?")}
                   className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
