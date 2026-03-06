@@ -13,11 +13,9 @@ import {
   FaCloud,
   FaDatabase,
   FaExclamationTriangle,
-  FaCommentDots,
   FaMicrophone,
   FaStop,
-  FaVolumeUp,
-  FaSpinner
+  FaChevronDown
 } from "react-icons/fa";
 
 interface Message {
@@ -220,9 +218,6 @@ export default function OpenRouterChatbot() {
         ...prev,
         { role: "assistant", content: data.response },
       ]);
-
-      // Optional: Speak the response
-      // speakResponse(data.response);
       
     } catch (error) {
       console.error("Error sending message:", error);
@@ -266,17 +261,6 @@ export default function OpenRouterChatbot() {
     }
   };
 
-  // Optional: Text-to-speech for responses
-  const speakResponse = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -299,8 +283,7 @@ export default function OpenRouterChatbot() {
   return (
     <>
       {/* Floating Button with Notification */}
-
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         {/* Notification Badge */}
         <AnimatePresence>
           {showNotification && !isOpen && (
@@ -308,7 +291,7 @@ export default function OpenRouterChatbot() {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
-              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white"
+              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white"
             >
               1
             </motion.div>
@@ -324,7 +307,7 @@ export default function OpenRouterChatbot() {
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
               transition={{ duration: 0.3 }}
               className="absolute bottom-16 right-0 w-64 sm:w-72 bg-white rounded-2xl shadow-xl p-4 mb-2 border border-purple-100"
-              >
+            >
               {/* Triangle pointer */}
               <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45 border-r border-b border-purple-100"></div>
               
@@ -335,7 +318,7 @@ export default function OpenRouterChatbot() {
                 <div className="flex-1">
                   <p className="text-sm text-gray-800 font-medium">Chat with me! 🎤</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    Ask questions using voice or text about Muhammad's skills and experience
+                    Ask questions using voice or text
                   </p>
                   <div className="flex gap-2 mt-2">
                     <button 
@@ -363,12 +346,12 @@ export default function OpenRouterChatbot() {
 
         {/* Main Chat Button */}
         <motion.button
-          className="relative w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
+          className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
-          {isOpen ? <FaTimes size={24} /> : <FaComments size={24} />}
+          {isOpen ? <FaTimes size={20} /> : <FaComments size={20} />}
         </motion.button>
       </div>
 
@@ -376,61 +359,76 @@ export default function OpenRouterChatbot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.2 }}
-
-            // className="fixed bottom-20 right-4 z-50 
-            //             w-[calc(100vw-2rem)] sm:w-96 
-            //             h-[70vh] sm:h-[600px] 
-            //             bg-white rounded-2xl shadow-2xl 
-            //             flex flex-col overflow-hidden border border-gray-200"
-
             className="fixed 
-            bottom-0 right-0 
-            w-full h-[85vh] 
-            sm:bottom-24 sm:right-6 
-            sm:w-96 sm:h-[600px]
-            z-50 bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
-            >
+              inset-x-0 bottom-0 
+              sm:inset-auto sm:bottom-24 sm:right-6 
+              sm:w-96 sm:h-[600px] sm:rounded-2xl
+              z-50 bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-200
+              rounded-t-2xl sm:rounded-2xl
+              max-h-[90vh] sm:max-h-[600px]"
+            style={{
+              height: 'min(90vh, 600px)'
+            }}
+          >
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 sm:p-4 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
-                    <FaRobot className="text-xl" />
+                <div className="flex items-center min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                    <FaRobot className="text-base sm:text-xl" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold">Muhammad Ali's AI Assistant</h3>
+                  <div className="truncate">
+                    <h3 className="font-semibold text-sm sm:text-base truncate">AI Assistant</h3>
                     <p className="text-xs text-purple-100 flex items-center">
                       <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
-                      Online • Voice supported
+                      <span className="truncate">Online • Voice supported</span>
                     </p>
                   </div>
                 </div>
-                <button 
-                  onClick={resetChat}
-                  className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full transition-colors"
-                  title="Start new conversation"
-                >
-                  Reset
-                </button>
+                
+                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                  <button
+                    onClick={resetChat}
+                    className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full transition-colors whitespace-nowrap"
+                  >
+                    Reset
+                  </button>
+                  
+                  {/* Mobile Close Button */}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="sm:hidden p-2 rounded-full hover:bg-white/20 transition"
+                  >
+                    <FaChevronDown size={18} />
+                  </button>
+                  
+                  {/* Desktop Close Button */}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="hidden sm:block p-2 rounded-full hover:bg-white/20 transition"
+                  >
+                    <FaTimes size={16} />
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Voice Feature Banner */}
             {!hasInteracted && (
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 px-4 py-2 border-b border-purple-100">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 px-3 sm:px-4 py-2 border-b border-purple-100 flex-shrink-0">
                 <p className="text-xs text-purple-700 flex items-center">
-                  <FaMicrophone className="mr-2 text-purple-600" />
-                  🎤 Try voice input! Click the microphone button and speak your question.
+                  <FaMicrophone className="mr-2 text-purple-600 flex-shrink-0" />
+                  <span className="truncate">🎤 Try voice input! Click the microphone button.</span>
                 </p>
               </div>
             )}
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
               {messages.map((message, index) => (
                 <motion.div
                   key={index}
@@ -440,13 +438,13 @@ export default function OpenRouterChatbot() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-2 ${
+                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 ${
                       message.role === "user"
                         ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
                         : "bg-white text-gray-800 shadow-sm border border-gray-200"
                     }`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">{message.content}</p>
                   </div>
                 </motion.div>
               ))}
@@ -459,9 +457,9 @@ export default function OpenRouterChatbot() {
                 >
                   <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                     </div>
                   </div>
                 </motion.div>
@@ -471,8 +469,8 @@ export default function OpenRouterChatbot() {
               {error && (
                 <div className="flex justify-center">
                   <div className="bg-red-50 text-red-600 text-xs px-3 py-2 rounded-full flex items-center">
-                    <FaExclamationTriangle className="mr-1" size={12} />
-                    {error}
+                    <FaExclamationTriangle className="mr-1 flex-shrink-0" size={12} />
+                    <span className="truncate max-w-[200px] sm:max-w-none">{error}</span>
                   </div>
                 </div>
               )}
@@ -483,11 +481,11 @@ export default function OpenRouterChatbot() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="mt-4"
+                  className="mt-2 sm:mt-4"
                 >
                   <p className="text-xs text-gray-500 mb-2">Try asking:</p>
-                  <div className="flex flex-wrap gap-2 justify-start">
-                    {suggestedQuestions.map((question, index) => (
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedQuestions.slice(0, 4).map((question, index) => (
                       <button
                         key={index}
                         onClick={() => sendMessage(question)}
@@ -504,7 +502,7 @@ export default function OpenRouterChatbot() {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-white border-t border-gray-200">
+            <div className="p-3 sm:p-4 bg-white border-t border-gray-200 flex-shrink-0">
               <div className="flex items-center space-x-2">
                 <div className="flex-1 relative">
                   <input
@@ -513,8 +511,8 @@ export default function OpenRouterChatbot() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={isListening ? "Listening..." : "Ask Question..."}
-                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                    placeholder={isListening ? "Listening..." : "Ask a question..."}
+                    className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs sm:text-sm"
                     disabled={isLoading || isListening}
                   />
                   
@@ -530,7 +528,7 @@ export default function OpenRouterChatbot() {
                       }`}
                       title={isListening ? "Stop listening" : "Start voice input"}
                     >
-                      {isListening ? <FaStop size={16} /> : <FaMicrophone size={16} />}
+                      {isListening ? <FaStop size={14} /> : <FaMicrophone size={14} />}
                     </button>
                   )}
                 </div>
@@ -538,13 +536,13 @@ export default function OpenRouterChatbot() {
                 <button
                   onClick={() => sendMessage()}
                   disabled={isLoading || !input.trim() || isListening}
-                  className={`p-2 rounded-full ${
+                  className={`p-2 rounded-full flex-shrink-0 ${
                     isLoading || !input.trim() || isListening
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-md"
                   } text-white transition-all`}
                 >
-                  <FaPaperPlane size={16} />
+                  <FaPaperPlane size={14} />
                 </button>
               </div>
               
@@ -556,50 +554,54 @@ export default function OpenRouterChatbot() {
                   className="flex items-center justify-center mt-2 space-x-2"
                 >
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                   <span className="text-xs text-gray-500">Listening... speak now</span>
                 </motion.div>
               )}
               
-              {/* Quick action buttons */}
-              <div className="flex flex-wrap justify-center gap-3 mt-3">
+              {/* Quick action buttons - Simplified for mobile */}
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2 sm:mt-3">
                 <button 
-                  onClick={() => sendMessage("What are your AI/ML skills?")}
+                  onClick={() => sendMessage("What are your AI skills?")}
                   className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                 >
                   <FaBrain className="mr-1" size={10} />
-                  AI Skills
+                  <span className="hidden sm:inline">AI Skills</span>
+                  <span className="sm:hidden">AI</span>
                 </button>
                 <button 
-                  onClick={() => sendMessage("Tell me about your cloud experience")}
+                  onClick={() => sendMessage("Cloud experience?")}
                   className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                 >
                   <FaCloud className="mr-1" size={10} />
-                  Cloud
+                  <span className="hidden sm:inline">Cloud</span>
+                  <span className="sm:hidden">Cloud</span>
                 </button>
                 <button 
-                  onClick={() => sendMessage("What projects have you built?")}
+                  onClick={() => sendMessage("What projects?")}
                   className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                 >
                   <FaCode className="mr-1" size={10} />
-                  Projects
+                  <span className="hidden sm:inline">Projects</span>
+                  <span className="sm:hidden">Projects</span>
                 </button>
                 <button 
-                  onClick={() => sendMessage("How can I contact you?")}
+                  onClick={() => sendMessage("Contact info?")}
                   className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
                 >
                   <FaDatabase className="mr-1" size={10} />
-                  Contact
+                  <span className="hidden sm:inline">Contact</span>
+                  <span className="sm:hidden">Contact</span>
                 </button>
               </div>
               
               {/* Speech Support Warning */}
               {!isSpeechSupported && (
                 <p className="text-center text-xs text-gray-400 mt-2">
-                  Voice input not supported. Try Chrome or Edge browser.
+                  Voice input not supported in this browser
                 </p>
               )}
             </div>
