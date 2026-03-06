@@ -58,6 +58,7 @@ export default function OpenRouterChatbot() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(0);
   
   // Voice input states
   const [isListening, setIsListening] = useState(false);
@@ -70,10 +71,11 @@ export default function OpenRouterChatbot() {
   const popupTimeoutRef = useRef<NodeJS.Timeout>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Detect mobile device
+  // Detect mobile device and set viewport height
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
+      setViewportHeight(window.innerHeight);
     };
     
     checkMobile();
@@ -82,9 +84,18 @@ export default function OpenRouterChatbot() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Handle keyboard visibility for mobile
+  // Handle keyboard visibility for mobile without zoom
   useEffect(() => {
     if (!isMobile || !isOpen) return;
+
+    // Prevent zoom on input focus
+    const preventZoom = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        // Set font size to 16px to prevent zoom on iOS
+        target.style.fontSize = '16px';
+      }
+    };
 
     const handleFocus = () => {
       // Small delay to ensure keyboard is shown
@@ -92,8 +103,13 @@ export default function OpenRouterChatbot() {
         if (window.visualViewport) {
           const viewportHeight = window.visualViewport.height;
           const windowHeight = window.innerHeight;
-          const keyboardHeight = windowHeight - viewportHeight;
+          const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
           setKeyboardHeight(keyboardHeight);
+          
+          // Scroll the message area to bottom when keyboard opens
+          setTimeout(() => {
+            scrollToBottom();
+          }, 100);
         }
       }, 100);
     };
@@ -106,7 +122,7 @@ export default function OpenRouterChatbot() {
       if (window.visualViewport) {
         const viewportHeight = window.visualViewport.height;
         const windowHeight = window.innerHeight;
-        const keyboardHeight = windowHeight - viewportHeight;
+        const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
         setKeyboardHeight(keyboardHeight > 100 ? keyboardHeight : 0);
       }
     };
@@ -120,7 +136,21 @@ export default function OpenRouterChatbot() {
     if (inputElement) {
       inputElement.addEventListener('focus', handleFocus);
       inputElement.addEventListener('blur', handleBlur);
+      inputElement.addEventListener('touchstart', preventZoom, { passive: false });
     }
+
+    // Prevent body scroll and zoom
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    // Add meta tag to prevent zoom if not exists
+    let viewportMeta = document.querySelector('meta[name=viewport]');
+    if (!viewportMeta) {
+      viewportMeta = document.createElement('meta');
+      viewportMeta.setAttribute('name', 'viewport');
+      document.head.appendChild(viewportMeta);
+    }
+    viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
 
     return () => {
       if (window.visualViewport) {
@@ -129,6 +159,17 @@ export default function OpenRouterChatbot() {
       if (inputElement) {
         inputElement.removeEventListener('focus', handleFocus);
         inputElement.removeEventListener('blur', handleBlur);
+        inputElement.removeEventListener('touchstart', preventZoom);
+      }
+      
+      // Restore body scroll
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      
+      // Restore viewport meta
+      const viewportMeta = document.querySelector('meta[name=viewport]');
+      if (viewportMeta) {
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1');
       }
     };
   }, [isMobile, isOpen]);
@@ -346,19 +387,6 @@ export default function OpenRouterChatbot() {
     setError(null);
   };
 
-  // Handle touch events to prevent body scroll when chat is open
-  useEffect(() => {
-    if (isOpen && isMobile) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, isMobile]);
-
   return (
     <>
       {/* Floating Button with Notification */}
@@ -467,7 +495,7 @@ export default function OpenRouterChatbot() {
               className={`
                 fixed z-50 flex flex-col overflow-hidden bg-white border border-gray-200 shadow-2xl
                 ${isMobile 
-                  ? `inset-x-0 bottom-0 rounded-t-2xl max-h-[90vh]` 
+                  ? `inset-x-0 bottom-0 rounded-t-2xl` 
                   : 'sm:bottom-24 sm:right-6 sm:top-auto sm:left-auto sm:w-96 sm:h-[600px] sm:rounded-2xl'
                 }
               `}
@@ -614,7 +642,8 @@ export default function OpenRouterChatbot() {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder={isListening ? "Listening..." : "Ask a question..."}
-                      className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs sm:text-sm"
+                      className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-base sm:text-sm"
+                      style={{ fontSize: '16px' }} // Force 16px to prevent zoom on iOS
                       disabled={isLoading || isListening}
                     />
                     
