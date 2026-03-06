@@ -58,7 +58,7 @@ export default function OpenRouterChatbot() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState(0);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   
   // Voice input states
   const [isListening, setIsListening] = useState(false);
@@ -71,11 +71,10 @@ export default function OpenRouterChatbot() {
   const popupTimeoutRef = useRef<NodeJS.Timeout>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Detect mobile device and set viewport height
+  // Detect mobile device
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
-      setViewportHeight(window.innerHeight);
     };
     
     checkMobile();
@@ -84,9 +83,9 @@ export default function OpenRouterChatbot() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Handle keyboard visibility for mobile without zoom
+  // Handle keyboard visibility for mobile without zoom - ONLY when input is focused
   useEffect(() => {
-    if (!isMobile || !isOpen) return;
+    if (!isMobile || !isOpen || !isInputFocused) return;
 
     // Prevent zoom on input focus
     const preventZoom = (e: Event) => {
@@ -116,10 +115,11 @@ export default function OpenRouterChatbot() {
 
     const handleBlur = () => {
       setKeyboardHeight(0);
+      setIsInputFocused(false);
     };
 
     const handleResize = () => {
-      if (window.visualViewport) {
+      if (window.visualViewport && isInputFocused) {
         const viewportHeight = window.visualViewport.height;
         const windowHeight = window.innerHeight;
         const keyboardHeight = Math.max(0, windowHeight - viewportHeight);
@@ -139,18 +139,20 @@ export default function OpenRouterChatbot() {
       inputElement.addEventListener('touchstart', preventZoom, { passive: false });
     }
 
-    // Prevent body scroll and zoom
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    // Add meta tag to prevent zoom if not exists
-    let viewportMeta = document.querySelector('meta[name=viewport]');
-    if (!viewportMeta) {
-      viewportMeta = document.createElement('meta');
-      viewportMeta.setAttribute('name', 'viewport');
-      document.head.appendChild(viewportMeta);
+    // Prevent body scroll and zoom only when input is focused
+    if (isInputFocused) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      
+      // Add meta tag to prevent zoom if not exists
+      let viewportMeta = document.querySelector('meta[name=viewport]');
+      if (!viewportMeta) {
+        viewportMeta = document.createElement('meta');
+        viewportMeta.setAttribute('name', 'viewport');
+        document.head.appendChild(viewportMeta);
+      }
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
     }
-    viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
 
     return () => {
       if (window.visualViewport) {
@@ -172,7 +174,7 @@ export default function OpenRouterChatbot() {
         viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1');
       }
     };
-  }, [isMobile, isOpen]);
+  }, [isMobile, isOpen, isInputFocused]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -285,11 +287,12 @@ export default function OpenRouterChatbot() {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
+  // REMOVED: Automatic focus when chat opens
+  // useEffect(() => {
+  //   if (isOpen && inputRef.current) {
+  //     inputRef.current.focus();
+  //   }
+  // }, [isOpen]);
 
   const sendMessage = async (messageText?: string) => {
     const messageToSend = messageText || input;
@@ -385,6 +388,14 @@ export default function OpenRouterChatbot() {
     ]);
     setShowSuggestions(true);
     setError(null);
+  };
+
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsInputFocused(false);
   };
 
   return (
@@ -483,7 +494,7 @@ export default function OpenRouterChatbot() {
               animate={{ 
                 opacity: 1, 
                 y: 0,
-                height: isMobile ? `calc(100% - ${keyboardHeight}px)` : "auto"
+                height: isMobile && isInputFocused ? `calc(100% - ${keyboardHeight}px)` : (isMobile ? '90%' : 'auto')
               }}
               exit={{ opacity: 0, y: isMobile ? "100%" : 20 }}
               transition={{ 
@@ -500,7 +511,7 @@ export default function OpenRouterChatbot() {
                 }
               `}
               style={isMobile ? { 
-                height: `calc(100% - ${keyboardHeight}px)`,
+                height: isInputFocused ? `calc(100% - ${keyboardHeight}px)` : '90%',
                 maxHeight: '100%'
               } : {}}
             >
@@ -641,7 +652,9 @@ export default function OpenRouterChatbot() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder={isListening ? "Listening..." : "Ask a question..."}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                      placeholder={isListening ? "Listening..." : "Tap to type..."}
                       className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-base sm:text-sm"
                       style={{ fontSize: '16px' }} // Force 16px to prevent zoom on iOS
                       disabled={isLoading || isListening}
