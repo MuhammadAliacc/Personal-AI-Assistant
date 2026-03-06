@@ -56,6 +56,8 @@ export default function OpenRouterChatbot() {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   
   // Voice input states
   const [isListening, setIsListening] = useState(false);
@@ -66,6 +68,70 @@ export default function OpenRouterChatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupTimeoutRef = useRef<NodeJS.Timeout>();
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Handle keyboard visibility for mobile
+  useEffect(() => {
+    if (!isMobile || !isOpen) return;
+
+    const handleFocus = () => {
+      // Small delay to ensure keyboard is shown
+      setTimeout(() => {
+        if (window.visualViewport) {
+          const viewportHeight = window.visualViewport.height;
+          const windowHeight = window.innerHeight;
+          const keyboardHeight = windowHeight - viewportHeight;
+          setKeyboardHeight(keyboardHeight);
+        }
+      }, 100);
+    };
+
+    const handleBlur = () => {
+      setKeyboardHeight(0);
+    };
+
+    const handleResize = () => {
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
+        const keyboardHeight = windowHeight - viewportHeight;
+        setKeyboardHeight(keyboardHeight > 100 ? keyboardHeight : 0);
+      }
+    };
+
+    // Visual Viewport API for more accurate keyboard detection
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.addEventListener('focus', handleFocus);
+      inputElement.addEventListener('blur', handleBlur);
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+      if (inputElement) {
+        inputElement.removeEventListener('focus', handleFocus);
+        inputElement.removeEventListener('blur', handleBlur);
+      }
+    };
+  }, [isMobile, isOpen]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -280,6 +346,19 @@ export default function OpenRouterChatbot() {
     setError(null);
   };
 
+  // Handle touch events to prevent body scroll when chat is open
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, isMobile]);
+
   return (
     <>
       {/* Floating Button with Notification */}
@@ -358,254 +437,278 @@ export default function OpenRouterChatbot() {
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed 
-              inset-x-0 bottom-0 
-              sm:inset-auto sm:bottom-24 sm:right-6 
-              sm:w-96 sm:h-[600px] sm:rounded-2xl
-              z-50 bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-200
-              rounded-t-2xl sm:rounded-2xl
-              max-h-[90vh] sm:max-h-[600px]"
-            style={{
-              height: 'min(90vh, 600px)'
-            }}
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 sm:p-4 flex-shrink-0">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center min-w-0">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
-                    <FaRobot className="text-base sm:text-xl" />
-                  </div>
-                  <div className="truncate">
-                    <h3 className="font-semibold text-sm sm:text-base truncate">AI Assistant</h3>
-                    <p className="text-xs text-purple-100 flex items-center">
-                      <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
-                      <span className="truncate">Online • Voice supported</span>
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                  <button
-                    onClick={resetChat}
-                    className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full transition-colors whitespace-nowrap"
-                  >
-                    Reset
-                  </button>
-                  
-                  {/* Mobile Close Button */}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="sm:hidden p-2 rounded-full hover:bg-white/20 transition"
-                  >
-                    <FaChevronDown size={18} />
-                  </button>
-                  
-                  {/* Desktop Close Button */}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="hidden sm:block p-2 rounded-full hover:bg-white/20 transition"
-                  >
-                    <FaTimes size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Voice Feature Banner */}
-            {!hasInteracted && (
-              <div className="bg-gradient-to-r from-purple-50 to-blue-50 px-3 sm:px-4 py-2 border-b border-purple-100 flex-shrink-0">
-                <p className="text-xs text-purple-700 flex items-center">
-                  <FaMicrophone className="mr-2 text-purple-600 flex-shrink-0" />
-                  <span className="truncate">🎤 Try voice input! Click the microphone button.</span>
-                </p>
-              </div>
+          <>
+            {/* Backdrop for mobile */}
+            {isMobile && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-40"
+                onClick={() => setIsOpen(false)}
+              />
             )}
-
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
-              {messages.map((message, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 ${
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
-                        : "bg-white text-gray-800 shadow-sm border border-gray-200"
-                    }`}
-                  >
-                    <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                  </div>
-                </motion.div>
-              ))}
-              
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-start"
-                >
-                  <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
-                    <div className="flex space-x-2">
-                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+            
+            <motion.div
+              ref={chatContainerRef}
+              initial={{ opacity: 0, y: isMobile ? "100%" : 20 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                height: isMobile ? `calc(100% - ${keyboardHeight}px)` : "auto"
+              }}
+              exit={{ opacity: 0, y: isMobile ? "100%" : 20 }}
+              transition={{ 
+                duration: 0.3,
+                type: "spring",
+                damping: 25,
+                stiffness: 200
+              }}
+              className={`
+                fixed z-50 flex flex-col overflow-hidden bg-white border border-gray-200 shadow-2xl
+                ${isMobile 
+                  ? `inset-x-0 bottom-0 rounded-t-2xl max-h-[90vh]` 
+                  : 'sm:bottom-24 sm:right-6 sm:top-auto sm:left-auto sm:w-96 sm:h-[600px] sm:rounded-2xl'
+                }
+              `}
+              style={isMobile ? { 
+                height: `calc(100% - ${keyboardHeight}px)`,
+                maxHeight: '100%'
+              } : {}}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 sm:p-4 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center min-w-0">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
+                      <FaRobot className="text-base sm:text-xl" />
+                    </div>
+                    <div className="truncate">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">AI Assistant</h3>
+                      <p className="text-xs text-purple-100 flex items-center">
+                        <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                        <span className="truncate">Online • Voice supported</span>
+                      </p>
                     </div>
                   </div>
-                </motion.div>
-              )}
-              
-              {/* Error Message */}
-              {error && (
-                <div className="flex justify-center">
-                  <div className="bg-red-50 text-red-600 text-xs px-3 py-2 rounded-full flex items-center">
-                    <FaExclamationTriangle className="mr-1 flex-shrink-0" size={12} />
-                    <span className="truncate max-w-[200px] sm:max-w-none">{error}</span>
+                  
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                    <button
+                      onClick={resetChat}
+                      className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded-full transition-colors whitespace-nowrap"
+                    >
+                      Reset
+                    </button>
+                    
+                    {/* Mobile Close Button */}
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="sm:hidden p-2 rounded-full hover:bg-white/20 transition"
+                    >
+                      <FaChevronDown size={18} />
+                    </button>
+                    
+                    {/* Desktop Close Button */}
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="hidden sm:block p-2 rounded-full hover:bg-white/20 transition"
+                    >
+                      <FaTimes size={16} />
+                    </button>
                   </div>
                 </div>
-              )}
-              
-              {/* Suggested Questions */}
-              {showSuggestions && messages.length === 1 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="mt-2 sm:mt-4"
-                >
-                  <p className="text-xs text-gray-500 mb-2">Try asking:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {suggestedQuestions.slice(0, 4).map((question, index) => (
-                      <button
-                        key={index}
-                        onClick={() => sendMessage(question)}
-                        className="text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 text-gray-600 hover:border-purple-500 hover:text-purple-600 transition-colors"
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-              
-              <div ref={messagesEndRef} />
-            </div>
+              </div>
 
-            {/* Input Area */}
-            <div className="p-3 sm:p-4 bg-white border-t border-gray-200 flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                <div className="flex-1 relative">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={isListening ? "Listening..." : "Ask a question..."}
-                    className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs sm:text-sm"
-                    disabled={isLoading || isListening}
-                  />
-                  
-                  {/* Voice Input Button */}
-                  {isSpeechSupported && (
-                    <button
-                      onClick={isListening ? stopListening : startListening}
-                      disabled={isLoading}
-                      className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full transition-all ${
-                        isListening 
-                          ? 'bg-red-500 text-white animate-pulse' 
-                          : 'text-gray-400 hover:text-purple-600'
+              {/* Voice Feature Banner */}
+              {!hasInteracted && (
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 px-3 sm:px-4 py-2 border-b border-purple-100 flex-shrink-0">
+                  <p className="text-xs text-purple-700 flex items-center">
+                    <FaMicrophone className="mr-2 text-purple-600 flex-shrink-0" />
+                    <span className="truncate">🎤 Try voice input! Click the microphone button.</span>
+                  </p>
+                </div>
+              )}
+
+              {/* Messages Area - This will scroll */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 ${
+                        message.role === "user"
+                          ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
+                          : "bg-white text-gray-800 shadow-sm border border-gray-200"
                       }`}
-                      title={isListening ? "Stop listening" : "Start voice input"}
                     >
-                      {isListening ? <FaStop size={14} /> : <FaMicrophone size={14} />}
-                    </button>
-                  )}
+                      <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                    </div>
+                  </motion.div>
+                ))}
+                
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex justify-start"
+                  >
+                    <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
+                      <div className="flex space-x-2">
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                
+                {/* Error Message */}
+                {error && (
+                  <div className="flex justify-center">
+                    <div className="bg-red-50 text-red-600 text-xs px-3 py-2 rounded-full flex items-center">
+                      <FaExclamationTriangle className="mr-1 flex-shrink-0" size={12} />
+                      <span className="truncate max-w-[200px] sm:max-w-none">{error}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Suggested Questions */}
+                {showSuggestions && messages.length === 1 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-2 sm:mt-4"
+                  >
+                    <p className="text-xs text-gray-500 mb-2">Try asking:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedQuestions.slice(0, 4).map((question, index) => (
+                        <button
+                          key={index}
+                          onClick={() => sendMessage(question)}
+                          className="text-xs bg-white border border-gray-200 rounded-full px-3 py-1.5 text-gray-600 hover:border-purple-500 hover:text-purple-600 transition-colors"
+                        >
+                          {question}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+                
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input Area - Fixed at bottom */}
+              <div className="p-3 sm:p-4 bg-white border-t border-gray-200 flex-shrink-0">
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1 relative">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder={isListening ? "Listening..." : "Ask a question..."}
+                      className="w-full px-3 sm:px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs sm:text-sm"
+                      disabled={isLoading || isListening}
+                    />
+                    
+                    {/* Voice Input Button */}
+                    {isSpeechSupported && (
+                      <button
+                        onClick={isListening ? stopListening : startListening}
+                        disabled={isLoading}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full transition-all ${
+                          isListening 
+                            ? 'bg-red-500 text-white animate-pulse' 
+                            : 'text-gray-400 hover:text-purple-600'
+                        }`}
+                        title={isListening ? "Stop listening" : "Start voice input"}
+                      >
+                        {isListening ? <FaStop size={14} /> : <FaMicrophone size={14} />}
+                      </button>
+                    )}
+                  </div>
+                  
+                  <button
+                    onClick={() => sendMessage()}
+                    disabled={isLoading || !input.trim() || isListening}
+                    className={`p-2 rounded-full flex-shrink-0 ${
+                      isLoading || !input.trim() || isListening
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : "bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-md"
+                    } text-white transition-all`}
+                  >
+                    <FaPaperPlane size={14} />
+                  </button>
                 </div>
                 
-                <button
-                  onClick={() => sendMessage()}
-                  disabled={isLoading || !input.trim() || isListening}
-                  className={`p-2 rounded-full flex-shrink-0 ${
-                    isLoading || !input.trim() || isListening
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-md"
-                  } text-white transition-all`}
-                >
-                  <FaPaperPlane size={14} />
-                </button>
+                {/* Voice Status Indicator */}
+                {isListening && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-center mt-2 space-x-2"
+                  >
+                    <div className="flex space-x-1">
+                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                    </div>
+                    <span className="text-xs text-gray-500">Listening... speak now</span>
+                  </motion.div>
+                )}
+                
+                {/* Quick action buttons - Simplified for mobile */}
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2 sm:mt-3">
+                  <button 
+                    onClick={() => sendMessage("What are your AI skills?")}
+                    className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
+                  >
+                    <FaBrain className="mr-1" size={10} />
+                    <span className="hidden sm:inline">AI Skills</span>
+                    <span className="sm:hidden">AI</span>
+                  </button>
+                  <button 
+                    onClick={() => sendMessage("Cloud experience?")}
+                    className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
+                  >
+                    <FaCloud className="mr-1" size={10} />
+                    <span className="hidden sm:inline">Cloud</span>
+                    <span className="sm:hidden">Cloud</span>
+                  </button>
+                  <button 
+                    onClick={() => sendMessage("What projects?")}
+                    className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
+                  >
+                    <FaCode className="mr-1" size={10} />
+                    <span className="hidden sm:inline">Projects</span>
+                    <span className="sm:hidden">Projects</span>
+                  </button>
+                  <button 
+                    onClick={() => sendMessage("Contact info?")}
+                    className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
+                  >
+                    <FaDatabase className="mr-1" size={10} />
+                    <span className="hidden sm:inline">Contact</span>
+                    <span className="sm:hidden">Contact</span>
+                  </button>
+                </div>
+                
+                {/* Speech Support Warning */}
+                {!isSpeechSupported && (
+                  <p className="text-center text-xs text-gray-400 mt-2">
+                    Voice input not supported in this browser
+                  </p>
+                )}
               </div>
-              
-              {/* Voice Status Indicator */}
-              {isListening && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-center mt-2 space-x-2"
-                >
-                  <div className="flex space-x-1">
-                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
-                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
-                  </div>
-                  <span className="text-xs text-gray-500">Listening... speak now</span>
-                </motion.div>
-              )}
-              
-              {/* Quick action buttons - Simplified for mobile */}
-              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                <button 
-                  onClick={() => sendMessage("What are your AI skills?")}
-                  className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
-                >
-                  <FaBrain className="mr-1" size={10} />
-                  <span className="hidden sm:inline">AI Skills</span>
-                  <span className="sm:hidden">AI</span>
-                </button>
-                <button 
-                  onClick={() => sendMessage("Cloud experience?")}
-                  className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
-                >
-                  <FaCloud className="mr-1" size={10} />
-                  <span className="hidden sm:inline">Cloud</span>
-                  <span className="sm:hidden">Cloud</span>
-                </button>
-                <button 
-                  onClick={() => sendMessage("What projects?")}
-                  className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
-                >
-                  <FaCode className="mr-1" size={10} />
-                  <span className="hidden sm:inline">Projects</span>
-                  <span className="sm:hidden">Projects</span>
-                </button>
-                <button 
-                  onClick={() => sendMessage("Contact info?")}
-                  className="text-xs text-gray-500 hover:text-purple-600 transition-colors flex items-center"
-                >
-                  <FaDatabase className="mr-1" size={10} />
-                  <span className="hidden sm:inline">Contact</span>
-                  <span className="sm:hidden">Contact</span>
-                </button>
-              </div>
-              
-              {/* Speech Support Warning */}
-              {!isSpeechSupported && (
-                <p className="text-center text-xs text-gray-400 mt-2">
-                  Voice input not supported in this browser
-                </p>
-              )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
