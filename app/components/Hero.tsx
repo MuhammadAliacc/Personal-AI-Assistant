@@ -41,7 +41,7 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="flex-1 text-center lg:text-left max-w-2xl"
           >
-            {/* Subtle badge */}
+            {/* Subtle badge
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ export default function Hero() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
               <span className="text-sm font-medium text-blue-700">Available for opportunities</span>
-            </motion.div>
+            </motion.div> */}
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight">
               <span className="bg-gradient-to-r from-slate-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
@@ -65,13 +65,13 @@ export default function Hero() {
               <TypeAnimation
                 sequence={[
                   'ML/AI Engineering',
-                  2000,
+                  1000,
                   'Agentic AI Systems',
-                  2000,
+                  1000,
                   'RAG Architectures',
-                  2000,
+                  1000,
                   'Cloud AI Solutions',
-                  2000,
+                  1000,
                 ]}
                 wrapper="span"
                 speed={50}
@@ -161,18 +161,18 @@ export default function Hero() {
             <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-96 lg:h-96 mx-auto">
               {/* Enhanced animated rings */}
               <motion.div 
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-indigo-400/20"
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-blue-400/20"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               />
               <motion.div 
-                className="absolute inset-2 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10"
+                className="absolute inset-2 rounded-full bg-gradient-to-r from-blue-500/10 to-blue-400/10"
                 animate={{ rotate: -360 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
               />
               
               {/* Main image container */}
-              <div className="absolute inset-4 bg-white rounded-full overflow-hidden shadow-2xl ring-4 ring-white/50">
+              <div className="absolute inset-4 bg-blue rounded-full overflow-hidden shadow-2xl ring-4 ring-blue/50">
                 <div className="relative w-full h-full">
                   <Image 
                     src="/DP.jpg" 

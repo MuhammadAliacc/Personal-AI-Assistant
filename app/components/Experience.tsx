@@ -12,10 +12,19 @@ const experiences = [
     location: "Cologne, Germany",
     description: "Led development of scalable ML systems for smart building optimization.",
     achievements: [
-      "Designed ML-based solutions for smart building optimization",
-      "Built scalable data pipelines for real-world sensor data",
-      "Developed cloud-native AWS workflows for end-to-end ML solutions",
-      "Integrated LLMs and RAG-based systems into applications"
+
+    "Engineered AI-powered educational chatbots using advanced prompt engineering and Agentic AI frameworks.",
+
+    "Designed and deployed ML solutions to optimize smart building energy consumption, achieving measurable efficiency gains.",
+
+    "Integrated LLMs and RAG-based systems into applications for intelligent document retrieval and conversational AI.",
+
+    "Built and scaled end-to-end data pipelines for real-world sensor and operational datasets.",
+
+    "Developed cloud-native workflows on AWS for automated ML model training, deployment, and monitoring.",
+
+    "Applied time-series forecasting models to predict energy demand, enhancing operational efficiency.",
+
     ],
     thesis: {
       title: "Master Thesis Project",
