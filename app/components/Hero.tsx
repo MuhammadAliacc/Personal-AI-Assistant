@@ -175,7 +175,7 @@ export default function Hero() {
               <div className="absolute inset-4 bg-blue rounded-full overflow-hidden shadow-2xl ring-4 ring-blue/50">
                 <div className="relative w-full h-full">
                   <Image 
-                    src="/DP.jpg" 
+                    src="/DP_2.jpeg" 
                     alt="Muhammad Ali"
                     fill
                     className="object-cover"
