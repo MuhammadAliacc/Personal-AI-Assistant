@@ -7,7 +7,7 @@ export default function Summary() {
           
           <div className="prose prose-lg text-gray-600 space-y-4">
             <p>
-              Data Engineer mit praktischer Erfahrung aus einem zweijährigen Forschungsprojekt an der TH Köln, wo ich End-to-End-Datenpipelines auf AWS gebaut und Reinforcement-Learning-Modelle für reale Gebäudesteuerungen entwickelt habe. Mein Fokus liegt auf skalierbaren Cloud-Lösungen und ETL Workflows.
+              Data engineer with practical experience from a two-year research project at TH Köln, where I built end-to-end data pipelines on AWS and developed reinforcement learning models for real building controls. My focus is on scalable cloud solutions and ETL workflows.
             </p>
             
             <p className="font-semibold text-blue-600">

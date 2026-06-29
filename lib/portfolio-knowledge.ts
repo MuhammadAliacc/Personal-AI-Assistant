@@ -50,6 +50,8 @@ WAPDA, Chashma, Pakistan
 - Bachelor's degree in Electrical and Electronics Engineering, Riphah International University (Sep 2017 - Aug 2021)
 
 # Certifications
+- Applied Machine Learning in Python (From University of Michigan) Credential ID 2GRDP9Y5EDXE
+- Data Analysis and Visualization with Power BI (From Microsoft)
 - Advanced SQL for Query Tuning and Performance Optimization
 - Learning Data Analytics: 1 Foundations
 - Power BI: Integrating AI and Machine Learning

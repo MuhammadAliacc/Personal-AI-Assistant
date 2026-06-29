@@ -64,13 +64,13 @@ export default function Hero() {
             <div className="text-xl sm:text-2xl md:text-3xl text-slate-600 mb-6 h-16 md:h-20 font-light">
               <TypeAnimation
                 sequence={[
-                  'ML/AI Engineering',
+                  'ML/Data Engineering',
                   1000,
-                  'Agentic AI Systems',
+                  'AWS Cloud Solutions',
                   1000,
-                  'RAG Architectures',
+                  'kubernetes & CI/CD',
                   1000,
-                  'Cloud AI Solutions',
+                  'ETL/ELT Pipelines',
                   1000,
                 ]}
                 wrapper="span"
@@ -81,16 +81,16 @@ export default function Hero() {
             </div>
 
             <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Building production-grade AI systems that solve real-world problems. 
-              Specialized in <span className="font-semibold text-slate-800">Agentic AI, RAG architectures,</span> and 
-              <span className="font-semibold text-slate-800"> Generative AI technologies</span> at scale.
+              Building ETL and ELT pipelines on Cloud platforms to solve real world data challenges.
+              Specialized in <span className="font-semibold text-slate-800">ETL/ELT, CI/CD pipelines,</span> and
+              <span className="font-semibold text-slate-800"> cloud data engineering</span>.
             </p>
 
             {/* Location and contact - refined */}
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 mb-8">
               <div className="flex items-center justify-center text-slate-600 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-slate-200/60 text-sm">
                 <HiOutlineLocationMarker className="text-blue-500 mr-2" size={16} />
-                <span>Cologne, Germany</span>
+                <span>Hurth, Germany</span>
               </div>
               <div className="flex items-center justify-center text-slate-600 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-slate-200/60 text-sm">
                 <FaPhone className="text-blue-500 mr-2" size={14} />
@@ -192,7 +192,7 @@ export default function Hero() {
                 className="absolute -top-2 -right-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg border border-blue-100 text-sm font-medium text-blue-700"
               >
                 <span className="flex items-center gap-1">
-                  <span className="text-base">🤖</span> LLM
+                  <span className="text-base"></span> ETL/ELT
                 </span>
               </motion.div>
               <motion.div
@@ -201,7 +201,7 @@ export default function Hero() {
                 className="absolute -bottom-2 -left-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg border border-indigo-100 text-sm font-medium text-indigo-700"
               >
                 <span className="flex items-center gap-1">
-                  <span className="text-base">⚡</span> RAG
+                  <span className="text-base"></span> Cloud Solutions
                 </span>
               </motion.div>
               <motion.div
@@ -210,7 +210,7 @@ export default function Hero() {
                 className="absolute top-1/2 -right-8 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg border border-purple-100 text-sm font-medium text-purple-700"
               >
                 <span className="flex items-center gap-1">
-                  <span className="text-base">🚀</span> GenAI
+                  <span className="text-base"></span> AWS 
                 </span>
               </motion.div>
             </div>
