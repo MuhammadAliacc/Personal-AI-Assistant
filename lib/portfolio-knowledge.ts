@@ -7,13 +7,34 @@ Email: muhammadaliacc@gmail.com
 Phone: +49 176 97712721
 
 # Skills & Expertise
-- Large Language Models (LLM)
-- Retrieval-Augmented Generation (RAG)
-- Generative AI (GenAI)
-- Agentic AI
 - AWS Cloud Services
 - ETL Pipelines
 - CI/CD & Git
+- ETL/ELT Workflows
+- Data Engineering
+- Machine Learning & AI
+- Reinforcement Learning
+- Transfer Learning
+- Large Language Models (LLMs)
+- Generative AI
+- Data Analytics & Visualization
+- Python Programming
+- SQL & NoSQL Databases
+- Kubernetes & Docker
+- MLOps Practices
+- Data Pipeline Orchestration
+- Time Series Forecasting
+- Data Warehousing
+- Data Modeling
+- Data Processing & Transformation
+- Data Integration
+- Data Quality & Validation
+- Data Governance & Security
+- Data Streaming & Real-time Processing
+- Data Lake & Big Data Solutions
+- Data Science & Statistical Analysis
+- Data Visualization Tools (Power BI, Tableau)
+- Data-driven Decision Making
 
 # Professional Experience
 
@@ -26,24 +47,26 @@ Key achievements:
 - Trained reinforcement learning models for building heating system optimization
 - Applied transfer learning to accelerate adaptation to unseen environments
 
-## Research Associate (November 2023 - December 2025)
+## Research Associate (Data/ML Engineering) (Jan 2024 - December 2025)
 Cologne University of Applied Sciences
-- Designed ML-based solutions to optimize smart buildings and reduce energy consumption
-- Built scalable data pipelines for real-world sensor data ingestion and analysis
-- Developed cloud-native AWS workflows for end-to-end ML solutions
-- Integrated LLMs and RAG-based systems into application workflows
+        "Participation in the modular AI project to develop intelligent building energy systems with the aim of reducing energy consumption by 20% and improving the efficiency of heating controls", 
+
+        "Development of reinforcement learning models for the automated optimization of heating and building controls based on sensor data and operating parameters, used in 2 real buildings in Cologne with over 15 trained model variants", 
+
+        "Building and operating end-to-end data pipelines on AWS to collect, process and analyze building sensor data, over 30 data points per building, daily data throughput several GB, for machine learning and analytics applications", 
+
+        "Implementation of hourly batch ETL workflows with Apache Spark, Python and SQL to transform and prepare time series and sensor data from 2 buildings", 
+
+        "Containerization of 2 independent ML components with Docker and orchestration of deployments with Kubernetes to ensure reproducible and scalable execution in the AWS environment",
 
 ## Data Analyst (February 2022 - July 2022)
 Andromeda Technologies (Pvt) Ltd, Islamabad, Pakistan
-- Analyzed network performance and outage reports
-- Tracked operational costs and visualized metrics
-- Delivered data-driven insights to optimize operations
+        "Analysis of network performance and outage data to identify recurring root causes",
+        
+        "Development of KPI dashboards for real-time monitoring of operational metrics for the operations team",
+        
+        "Preparation of structured operational data to improve the reliability of the network infrastructure",
 
-## Student Internship (April 2019 - September 2019)
-WAPDA, Chashma, Pakistan
-- Designed and implemented ETL pipeline for energy data
-- Managed and optimized data warehouses
-- Automated data ingestion workflows
 
 # Education
 - Master's degree in Automation and IT, Cologne University of Applied Sciences (Oct 2022 - Feb 2026)
@@ -60,7 +83,9 @@ WAPDA, Chashma, Pakistan
 
 # Projects
 - Scalable ML Pipeline on AWS for Building Heating Systems Optimization
-- RAG-based systems for contextual reasoning
+- Reinforcement Learning Models for Building Energy Management
+- End-to-End Data Pipelines for Sensor Data Processing and Analytics
+- Time-Series-Forecasting-Pipeline auf AWS
 - Cloud-native ML platforms with MLOps practices
 
 # Open to Work

@@ -68,7 +68,7 @@ export default function Hero() {
                   1000,
                   'AWS Cloud Solutions',
                   1000,
-                  'kubernetes & CI/CD',
+                  'Kubernetes & CI/CD',
                   1000,
                   'ETL/ELT Pipelines',
                   1000,

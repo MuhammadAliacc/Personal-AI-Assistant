@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 const experiences = [
   {
-    title: "Research Associate",
+    title: "Research Associate (Data/ML Engineering)",
     company: "Cologne University of Applied Sciences",
     period: "November 2023 - December 2025",
     location: "Cologne, Germany",
