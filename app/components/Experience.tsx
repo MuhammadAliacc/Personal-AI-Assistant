@@ -12,19 +12,15 @@ const experiences = [
     location: "Cologne, Germany",
     description: "Led development of scalable ML systems for smart building optimization.",
     achievements: [
+        "Participation in the modular AI project to develop intelligent building energy systems with the aim of reducing energy consumption by 20% and improving the efficiency of heating controls", 
 
-    "Engineered AI-powered educational chatbots using advanced prompt engineering and Agentic AI frameworks.",
+        "Development of reinforcement learning models for the automated optimization of heating and building controls based on sensor data and operating parameters, used in 2 real buildings in Cologne with over 15 trained model variants", 
 
-    "Designed and deployed ML solutions to optimize smart building energy consumption, achieving measurable efficiency gains.",
+        "Building and operating end-to-end data pipelines on AWS to collect, process and analyze building sensor data, over 30 data points per building, daily data throughput several GB, for machine learning and analytics applications", 
 
-    "Integrated LLMs and RAG-based systems into applications for intelligent document retrieval and conversational AI.",
+        "Implementation of hourly batch ETL workflows with Apache Spark, Python and SQL to transform and prepare time series and sensor data from 2 buildings", 
 
-    "Built and scaled end-to-end data pipelines for real-world sensor and operational datasets.",
-
-    "Developed cloud-native workflows on AWS for automated ML model training, deployment, and monitoring.",
-
-    "Applied time-series forecasting models to predict energy demand, enhancing operational efficiency.",
-
+        "Containerization of 2 independent ML components with Docker and orchestration of deployments with Kubernetes to ensure reproducible and scalable execution in the AWS environment",
     ],
     thesis: {
       title: "Master Thesis Project",
@@ -41,31 +37,31 @@ const experiences = [
     color: "from-purple-500 to-pink-500"
   },
   {
-    title: "Data Analyst",
+    title: "Data Analyst Intern",
     company: "Andromeda Technologies (Pvt) Ltd",
     period: "February 2022 - July 2022",
     location: "Islāmābād, Pakistan",
     achievements: [
-      "Analyzed network performance and outage reports",
-      "Tracked operational costs and visualized metrics",
-      "Delivered data-driven insights to optimize operations"
+        "Analysis of network performance and outage data to identify recurring root causes",
+        "Development of KPI dashboards for real-time monitoring of operational metrics for the operations team",
+        "Preparation of structured operational data to improve the reliability of the network infrastructure",
     ],
     icon: "📊",
     color: "from-green-500 to-emerald-500"
   },
-  {
-    title: "Student Internship",
-    company: "WAPDA",
-    period: "April 2019 - September 2019",
-    location: "Chashma, Pakistan",
-    achievements: [
-      "Designed ETL pipeline for energy data",
-      "Managed and optimized data warehouses",
-      "Automated data ingestion workflows"
-    ],
-    icon: "⚡",
-    color: "from-orange-500 to-red-500"
-  }
+  // {
+  //   title: "Student Internship",
+  //   company: "WAPDA",
+  //   period: "April 2019 - September 2019",
+  //   location: "Chashma, Pakistan",
+  //   achievements: [
+  //     "Designed ETL pipeline for energy data",
+  //     "Managed and optimized data warehouses",
+  //     "Automated data ingestion workflows"
+  //   ],
+  //   icon: "⚡",
+  //   color: "from-orange-500 to-red-500"
+  // }
 ]
 
 export default function Experience() {

@@ -7,20 +7,11 @@ export default function Summary() {
           
           <div className="prose prose-lg text-gray-600 space-y-4">
             <p>
-              AI Engineer with hands-on experience in developing and deploying scalable AI solutions in production environments. 
-              Specializing in Agentic AI, Generative AI (GenAI), and Retrieval-Augmented Generation (RAG) systems. 
-              Passionate about applying GenAI to real-world problems by building reliable, efficient, and user-focused AI systems.
-            </p>
-            
-            <p>
-              I have experience integrating LLM APIs, building embedding pipelines, working with vector databases, 
-              and deploying AI services in cloud environments. My expertise also includes developing scalable data pipelines, 
-              deploying machine learning models, and maintaining reliable AI services in production.
+              Data Engineer mit praktischer Erfahrung aus einem zweijährigen Forschungsprojekt an der TH Köln, wo ich End-to-End-Datenpipelines auf AWS gebaut und Reinforcement-Learning-Modelle für reale Gebäudesteuerungen entwickelt habe. Mein Fokus liegt auf skalierbaren Cloud-Lösungen und ETL Workflows.
             </p>
             
             <p className="font-semibold text-blue-600">
-              Open to roles in ML/AI Engineering, Applied AI, and LLM Engineering where I can make meaningful contributions 
-              to impactful, production-grade AI systems.
+              Open to roles in ML/Data Engineering where I can make meaningful contributions to impactful, production-grade systems.
             </p>
           </div>
         </div>
